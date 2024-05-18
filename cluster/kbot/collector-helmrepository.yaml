@@ -1,0 +1,9 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: open-telemetry
+  namespace: kbot
+spec:
+  interval: 10m0s
+  url: https://open-telemetry.github.io/opentelemetry-helm-charts

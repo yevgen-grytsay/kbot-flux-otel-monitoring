@@ -1,0 +1,72 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: collector
+  namespace: kbot
+spec:
+  chart:
+    spec:
+      chart: opentelemetry-collector
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: open-telemetry
+      version: 0.91.0
+  interval: 10m0s
+  values:
+    config:
+      exporters:
+        debug:
+          verbosity: normal
+        loki:
+          endpoint: http://loki:3100/loki/api/v1/push
+        prometheus:
+          endpoint: 0.0.0.0:8889
+      receivers:
+        otlp:
+          protocols:
+            http:
+              endpoint: ${env:MY_POD_IP}:3030
+      service:
+        pipelines:
+          logs:
+            exporters:
+            - debug
+            - loki
+            processors:
+            - batch
+            receivers:
+            - otlp
+          metrics:
+            exporters:
+            - debug
+            - prometheus
+            processors:
+            - batch
+            receivers:
+            - otlp
+          traces:
+            exporters:
+            - debug
+            processors:
+            - batch
+            receivers:
+            - otlp
+    image:
+      repository: otel/opentelemetry-collector-contrib
+    mode: deployment
+    nameOverride: collector
+    ports:
+      otlp-http:
+        containerPort: 3030
+        enabled: true
+        hostPort: 3030
+        protocol: TCP
+        servicePort: 3030
+      prometheus:
+        containerPort: 8889
+        enabled: true
+        hostPort: 8889
+        protocol: TCP
+        servicePort: 8889
