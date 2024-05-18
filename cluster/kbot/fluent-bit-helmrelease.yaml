@@ -1,0 +1,72 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: fluent-bit
+  namespace: kbot
+spec:
+  chart:
+    spec:
+      chart: fluent-bit
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: fluent
+      version: 0.46.6
+  interval: 10m0s
+  values:
+    config:
+      filters: |
+        [FILTER]
+            Name kubernetes
+            Match kube.*
+            Merge_Log On
+            # Merge_Log_Key original_log
+            Keep_Log Off
+            K8S-Logging.Parser On
+            K8S-Logging.Exclude On
+            # Namespace_Labels On
+      inputs: |
+        [INPUT]
+            Name tail
+            Path /var/log/containers/*.log
+            # Parser cri
+            multiline.parser docker, cri
+            Tag kube.*
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+
+        [INPUT]
+            Name systemd
+            Tag host.*
+            Systemd_Filter _SYSTEMD_UNIT=kubelet.service
+            Read_From_Tail On
+      outputs: |
+        [OUTPUT]
+            Name opentelemetry
+            Match kube.*
+            Host collector
+            Port 3030
+            metrics_uri /v1/metrics
+            logs_uri /v1/logs
+            traces_uri /v1/traces
+            Log_response_payload True
+            tls off
+            tls.verify off
+            Retry_Limit False
+            add_label app fluent-bit
+            add_label color blue
+
+        [OUTPUT]
+            Name opentelemetry
+            Match host.*
+            Host collector
+            Port 3030
+            metrics_uri /v1/metrics
+            logs_uri /v1/logs
+            traces_uri /v1/traces
+            Log_response_payload True
+            tls off
+            tls.verify off
+            Retry_Limit False
+    logLevel: warn

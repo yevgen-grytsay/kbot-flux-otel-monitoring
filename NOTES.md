@@ -41,3 +41,25 @@ flux create hr loki \
     --values=./otel/loki/helm-values.yaml \
     --export > ./cluster/kbot/loki-helmrelease.yaml
 ```
+
+## Fluent-bit
+```sh
+helm repo add fluent https://fluent.github.io/helm-charts
+helm repo update fluent
+helm show chart fluent/fluent-bit
+
+flux create source helm fluent \
+    --namespace=kbot \
+    --url=https://fluent.github.io/helm-charts \
+    --interval=10m \
+    --export > ./cluster/kbot/fluent-bit-helmrepository.yaml
+
+flux create hr fluent-bit \
+    --namespace=kbot \
+    --source=HelmRepository/fluent \
+    --chart=fluent-bit \
+    --chart-version="0.46.6" \
+    --interval=10m \
+    --values=./otel/fluent-bit/helm-values.yaml \
+    --export > ./cluster/kbot/fluent-bit-helmrelease.yaml
+```
