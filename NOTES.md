@@ -48,6 +48,8 @@ helm repo add fluent https://fluent.github.io/helm-charts
 helm repo update fluent
 helm show chart fluent/fluent-bit
 
+helm search repo fluent
+
 flux create source helm fluent \
     --namespace=kbot \
     --url=https://fluent.github.io/helm-charts \
@@ -62,4 +64,16 @@ flux create hr fluent-bit \
     --interval=10m \
     --values=./otel/fluent-bit/helm-values.yaml \
     --export > ./cluster/kbot/fluent-bit-helmrelease.yaml
+```
+
+## Grafana
+```sh
+flux create hr grafana \
+    --namespace=kbot \
+    --source=HelmRepository/grafana \
+    --chart=grafana \
+    --chart-version="7.3.11" \
+    --interval=10m \
+    --values=./otel/grafana/helm-values.yaml \
+    --export > ./cluster/kbot/grafana-helmrelease.yaml
 ```

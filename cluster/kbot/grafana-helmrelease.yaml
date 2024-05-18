@@ -1,0 +1,30 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: kbot
+spec:
+  chart:
+    spec:
+      chart: grafana
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+      version: 7.3.11
+  interval: 10m0s
+  values:
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+        - access: proxy
+          basicAuth: false
+          editable: true
+          isDefault: false
+          name: Loki
+          orgId: 1
+          type: loki
+          url: http://loki:3100
+          version: 1
