@@ -1,0 +1,34 @@
+server:
+  global:
+    ## How frequently to scrape targets by default
+    ##
+    scrape_interval: 15s
+    ## How long until a scrape request times out
+    ##
+    scrape_timeout: 10s
+    ## How frequently to evaluate rules
+    ##
+    evaluation_interval: 15s
+
+alertmanager:
+  enabled: false
+
+kube-state-metrics:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: false
+
+prometheus-pushgateway:
+  enabled: false
+
+serverFiles:
+  prometheus.yml:
+    scrape_configs:
+      - job_name: prometheus
+        static_configs:
+          - targets: ["localhost:9090"]
+      - job_name: otel_collector
+        scrape_interval: 5s
+        static_configs:
+          - targets: ["collector:8889"]

@@ -1,0 +1,37 @@
+config:
+  inputs: |
+    [INPUT]
+        Name tail
+        Path /var/log/containers/*.log
+        multiline.parser docker, cri
+        Tag kube.*
+        Mem_Buf_Limit 5MB
+        Skip_Long_Lines On
+
+    [INPUT]
+        Name systemd
+        Tag host.*
+        Systemd_Filter _SYSTEMD_UNIT=kubelet.service
+        Read_From_Tail On
+
+  filters: |
+    [FILTER]
+        Name kubernetes
+        Match kube.*
+        Merge_Log On
+        Keep_Log Off
+        K8S-Logging.Parser On
+        K8S-Logging.Exclude On
+
+  outputs: |
+    [OUTPUT]
+        Name                 opentelemetry
+        Match                Match kube.*
+        Host                 collector
+        Port                 3030
+        metrics_uri          /v1/metrics
+        logs_uri             /v1/logs
+        traces_uri           /v1/traces
+        Log_response_payload True
+        tls                  off
+        tls.verify           off
