@@ -78,6 +78,24 @@ flux create hr grafana \
     --export > ./cluster/kbot/grafana-helmrelease.yaml
 ```
 
+## Prometheus
+```sh
+flux create source helm prometheus \
+    --namespace=kbot \
+    --url=https://prometheus-community.github.io/helm-charts \
+    --interval=10m \
+    --export > ./cluster/kbot/prometheus-helmrepository.yaml
+
+flux create hr prometheus \
+    --namespace=kbot \
+    --source=HelmRepository/prometheus \
+    --chart=prometheus \
+    --chart-version="25.21.0" \
+    --interval=10m \
+    --values=./otel/prometheus/helm-values.yaml \
+    --export > ./cluster/kbot/prometheus-helmrelease.yaml
+```
+
 ## Sealed Secrets
 ```sh
 flux create source helm sealed-secrets \
@@ -149,5 +167,11 @@ flux create helmrelease kbot \
 ```
 
 
+## Misc
+```sh
 kubectl logs -f --selector="app.kubernetes.io/name=fluent-bit" -n kbot
 
+curl -H "Content-Type: application/json" -XPOST -s "http://127.0.0.1:3100/loki/api/v1/push" --data "{\"streams\": [{\"stream\": {\"job\": \"test\"}, \"values\": [[\"$(date +%s)000000000\", \"fizzbuzz\"]]}]}"
+
+curl "http://127.0.0.1:3100/loki/api/v1/query_range" --data-urlencode 'query={job="test"}' | jq .data.result
+```
