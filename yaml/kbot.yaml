@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kbot-test
+  namespace: kbot
+spec:
+  containers:
+    - name: kbot-test
+      image: "yevhenhrytsai/kbot:v1.0.1-0b96804-amd64"
+      command: ["./kbot", "start"]
+      env:
+        - name: TELE_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: kbot-token-secret
+              key: token
+      resources: null
