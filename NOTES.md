@@ -147,3 +147,7 @@ flux create helmrelease kbot \
     --values=./kbot-helm-values.yaml \
     --export > ./cluster/kbot/kbot-helmrelease.yaml
 ```
+
+
+kubectl logs -f --selector="app.kubernetes.io/name=fluent-bit" -n kbot
+
