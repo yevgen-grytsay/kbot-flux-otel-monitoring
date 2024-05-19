@@ -77,3 +77,22 @@ flux create hr grafana \
     --values=./otel/grafana/helm-values.yaml \
     --export > ./cluster/kbot/grafana-helmrelease.yaml
 ```
+
+## Sealed Secrets
+```sh
+flux create source helm sealed-secrets \
+--interval=1h \
+--url=https://bitnami-labs.github.io/sealed-secrets \
+--export > ./cluster/flux-system/sealed-secrets-helmrepository.yaml
+
+
+flux create helmrelease sealed-secrets \
+--interval=1h \
+--release-name=sealed-secrets-controller \
+--target-namespace=flux-system \
+--source=HelmRepository/sealed-secrets \
+--chart=sealed-secrets \
+--chart-version=">=1.16.0-0" \
+--crds=CreateReplace \
+--export > ./cluster/flux-system/sealed-secrets-helmrelease.yaml
+```
