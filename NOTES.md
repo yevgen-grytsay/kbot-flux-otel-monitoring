@@ -109,7 +109,7 @@ kubectl get secret \
   --namespace flux-system \
   --selector sealedsecrets.bitnami.com/sealed-secrets-key=active \
   --output jsonpath='{.items[0].data.tls\.crt}' \
-| base64 -d
+| base64 -d > ./pub-sealed-secrets.pem
 ```
 
 
@@ -118,7 +118,7 @@ kubectl get secret \
 read -s TELE_TOKEN
 export TELE_TOKEN
 
-kubectl -n default create secret generic kbot-secret \
+kubectl -n default create secret generic kbot-token-secret \
 --namespace=kbot \
 --from-literal=token=${TELE_TOKEN} \
 --dry-run=client \
