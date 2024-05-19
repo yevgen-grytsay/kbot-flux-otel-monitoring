@@ -1,0 +1,11 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: kbot
+  namespace: kbot
+spec:
+  interval: 1m0s
+  ref:
+    branch: demo
+  url: https://github.com/yevgen-grytsay/kbot

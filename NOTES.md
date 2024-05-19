@@ -128,3 +128,22 @@ kubeseal --format=yaml --cert=pub-sealed-secrets.pem \
 < ./cluster/kbot/secret.yaml > ./cluster/kbot/secret-sealed.yaml
 ```
 
+## Kbot
+
+```sh
+flux create source git kbot \
+    --namespace=kbot \
+    --url=https://github.com/yevgen-grytsay/kbot \
+    --interval=1m0s \
+    --branch=demo \
+    --export > ./cluster/kbot/kbot-gitrepo.yaml
+
+flux create helmrelease kbot \
+    --namespace=kbot \
+    --source=GitRepository/kbot \
+    --chart=helm \
+    --chart-version=">=0.1.3" \
+    --interval=1m0s \
+    --values=./kbot-helm-values.yaml \
+    --export > ./cluster/kbot/kbot-helmrelease.yaml
+```
