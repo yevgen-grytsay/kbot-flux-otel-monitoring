@@ -37,7 +37,8 @@ config:
     [FILTER]
         Name kubernetes
         Match kube.*
-        Kube_URL https://kubernetes.default.svc.cluster.local:443
+        # Kube_URL https://kubernetes.default.svc.cluster.local:443
+        Kube_URL https://kubernetes.default:443
         Merge_Log On
         # Merge_Log_Key original_log
         Keep_Log Off
