@@ -15,16 +15,19 @@ spec:
       version: 7.3.11
   interval: 10m0s
   values:
+    grafana.ini:
+      log:
+        mode: file
     datasources:
       datasources.yaml:
         apiVersion: 1
         datasources:
-        - access: proxy
-          basicAuth: false
-          editable: true
-          isDefault: false
-          name: Loki
-          orgId: 1
-          type: loki
-          url: http://loki:3100
-          version: 1
+          - access: proxy
+            basicAuth: false
+            editable: true
+            isDefault: false
+            name: Loki
+            orgId: 1
+            type: loki
+            url: http://loki:3100
+            version: 1
