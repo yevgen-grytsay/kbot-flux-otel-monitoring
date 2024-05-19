@@ -96,3 +96,35 @@ flux create helmrelease sealed-secrets \
 --crds=CreateReplace \
 --export > ./cluster/flux-system/sealed-secrets-helmrelease.yaml
 ```
+
+```sh
+$ kubeseal --fetch-cert --controller-name=sealed-secrets-controller --controller-namespace=flux-system > pub-sealed-secrets.pem
+error: cannot fetch certificate: error trying to reach service: dial tcp 10.1.182.226:8080: i/o timeout
+```
+
+### kubeseal `error: cannot fetch certificate` Workaround
+https://github.com/bitnami-labs/sealed-secrets/issues/368#issuecomment-1646192551
+```sh
+kubectl get secret \
+  --namespace flux-system \
+  --selector sealedsecrets.bitnami.com/sealed-secrets-key=active \
+  --output jsonpath='{.items[0].data.tls\.crt}' \
+| base64 -d
+```
+
+
+### Create Secret
+```sh
+read -s TELE_TOKEN
+export TELE_TOKEN
+
+kubectl -n default create secret generic kbot-secret \
+--namespace=kbot \
+--from-literal=token=${TELE_TOKEN} \
+--dry-run=client \
+-o yaml > ./cluster/kbot/secret.yaml
+
+kubeseal --format=yaml --cert=pub-sealed-secrets.pem \
+< ./cluster/kbot/secret.yaml > ./cluster/kbot/secret-sealed.yaml
+```
+
