@@ -2,10 +2,10 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: kbot
+  name: dice-server
   namespace: kbot
 spec:
   interval: 1m0s
   ref:
     branch: main
-  url: https://github.com/yevgen-grytsay/kbot
+  url: https://github.com/yevgen-grytsay/otel-dice-server

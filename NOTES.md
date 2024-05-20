@@ -153,19 +153,36 @@ flux create source git kbot \
     --namespace=kbot \
     --url=https://github.com/yevgen-grytsay/kbot \
     --interval=1m0s \
-    --branch=demo \
+    --branch=main \
     --export > ./cluster/kbot/kbot-gitrepo.yaml
 
 flux create helmrelease kbot \
     --namespace=kbot \
     --source=GitRepository/kbot \
     --chart=helm \
-    --chart-version=">=0.1.3" \
+    --chart-version=">=0.1.7" \
     --interval=1m0s \
     --values=./kbot-helm-values.yaml \
     --export > ./cluster/kbot/kbot-helmrelease.yaml
 ```
 
+## Dice Server
+```sh
+flux create source git dice-server \
+    --namespace=kbot \
+    --url=https://github.com/yevgen-grytsay/otel-dice-server \
+    --interval=1m0s \
+    --branch=main \
+    --export > ./cluster/kbot/dice-server-gitrepo.yaml
+
+flux create helmrelease dice-server \
+    --namespace=kbot \
+    --source=GitRepository/dice-server \
+    --chart=helm \
+    --chart-version=">=0.3.1" \
+    --interval=1m0s \
+    --export > ./cluster/kbot/dice-server-helmrelease.yaml
+```
 
 ## Misc
 ```sh

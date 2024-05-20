@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kbot
+  name: dice-server
   namespace: kbot
 spec:
   chart:
@@ -11,9 +11,6 @@ spec:
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: GitRepository
-        name: kbot
-      version: ">=0.1.7"
+        name: dice-server
+      version: '>=0.3.1'
   interval: 1m0s
-  values:
-    secret:
-      name: kbot-token-secret
