@@ -2,6 +2,54 @@
 
 ![grafana demo](./grafana_demo.gif)
 
+## Installation
+```sh
+terraform apply -var-file=<your-var-file>
+```
+
+#### Terraform Input Variables
+
+| Name    | Description |
+| -------- | ------- |
+| github_org  | Власник репозиторію на GitHub (наприклад, `yevgen-grytsay`)    |
+| github_repository | Назва репозиторію на GitHub (без назви власника, наприклад `kbot-flux-otel-monitoring-2`)     |
+| github_token    | GitHub PAT-токен для flux     |
+
+## Якщо треба повторити шифрування секрету
+Завантажити сертифікат, згенерований `sealed-secrets-controller`:
+```sh
+$ kubeseal --fetch-cert --controller-name=sealed-secrets-controller --controller-namespace=flux-system > pub-sealed-secrets.pem
+```
+Якщо команда не спрацьовує, наприклад повертає помилку `error: cannot fetch certificate: error trying to reach service: dial tcp 10.1.182.226:8080: i/o timeout`, можна зробити те ж саме наступним способом:
+
+```sh
+kubectl get secret \
+  --namespace flux-system \
+  --selector sealedsecrets.bitnami.com/sealed-secrets-key=active \
+  --output jsonpath='{.items[0].data.tls\.crt}' \
+| base64 -d > ./pub-sealed-secrets.pem
+```
+
+Тепер можна згенерувати і зашифрувати серкет:
+```sh
+read -s TELE_TOKEN
+export TELE_TOKEN
+
+kubectl -n default create secret generic kbot-token-secret \
+--namespace=kbot \
+--from-literal=token=${TELE_TOKEN} \
+--dry-run=client \
+-o yaml > ./secret.yaml
+
+kubeseal --format=yaml --cert=pub-sealed-secrets.pem \
+< ./secret.yaml > ./cluster/kbot/secret-sealed.yaml
+
+rm ./secret.yaml
+rm ./pub-sealed-secrets.pem
+
+git add ./cluster/kbot/secret-sealed.yaml
+```
+
 ## Схема моніторингу
 
 ```mermaid

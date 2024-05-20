@@ -1,0 +1,3 @@
+github_org        = "yevgen-grytsay"
+github_repository = "kbot-flux-otel-monitoring-2"
+github_token      = "<GitHub PAT token>"
