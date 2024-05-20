@@ -1,4 +1,7 @@
 # kbot-flux-otel-monitoring-2
+
+![grafana demo](./grafana_demo.gif)
+
 ## Схема моніторингу
 
 ```mermaid

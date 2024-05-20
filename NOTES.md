@@ -192,3 +192,9 @@ curl -H "Content-Type: application/json" -XPOST -s "http://127.0.0.1:3100/loki/a
 
 curl "http://127.0.0.1:3100/loki/api/v1/query_range" --data-urlencode 'query={job="test"}' | jq .data.result
 ```
+
+```sh
+ffmpeg -i otel-grafana-2024-05-20_13.51.09.mkv \
+    -vf "fps=5" \
+    -loop 0 grafana_demo.gif
+```
