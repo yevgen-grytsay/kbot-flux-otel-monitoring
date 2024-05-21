@@ -26,6 +26,7 @@ spec:
       receivers:
         otlp:
           protocols:
+            grpc: null
             http:
               endpoint: ${env:MY_POD_IP}:3030
       service:
