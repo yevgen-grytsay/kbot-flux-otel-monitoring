@@ -11,6 +11,7 @@ config:
   receivers:
     otlp:
       protocols:
+        grpc:
         http:
           endpoint: ${env:MY_POD_IP}:3030
 
