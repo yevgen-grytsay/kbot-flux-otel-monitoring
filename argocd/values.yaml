@@ -7,7 +7,7 @@
 app:
   repoURL: https://github.com/yevgen-grytsay/kbot-flux-otel-monitoring-2
   targetRevision: argocd # targetRevision: Revision (tag/branch/commit) of the repository (eg HEAD)
-  namespace: kbot-argocd
+  namespace: argocd
   destination:
     server: https://kubernetes.default.svc
 # image:
