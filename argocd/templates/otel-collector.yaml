@@ -19,22 +19,58 @@ spec:
     server: {{ .Values.app.destination.server }}
   # The project the application belongs to.
   project: default
-
-  # Source of the application manifests
-  sources:
-    - repoURL: {{ .Values.app.repoURL }}
-      targetRevision: {{ .Values.app.targetRevision }}
-      ref: values
-
-    - repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts  # Can point to either a Helm chart repo or a git repo.
-      targetRevision: "0.91.0"  # For Helm, this refers to the chart version.
-      # path: guestbook  # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
-
-      # helm specific config
-      chart: opentelemetry-collector
-      helm:
-        valueFiles:
-          - values.yaml
-          - $values/otel/collector/helm-values.yaml
-    #   fileParameters:
-    #     - path: files/config.json
+  source:
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: "0.91.0"
+    chart: opentelemetry-collector
+    helm:
+      valuesObject:
+        nameOverride: collector
+        ## https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-collector/UPGRADING.md#0880-to-0890
+        image:
+          repository: "otel/opentelemetry-collector-contrib"
+        mode: deployment
+        config:
+          ## https://opentelemetry.io/docs/collector/configuration/#receivers
+          receivers:
+            otlp:
+              protocols:
+                grpc:
+                http:
+                  endpoint: ${env:MY_POD_IP}:3030
+          ## https://opentelemetry.io/docs/collector/configuration/#exporters
+          exporters:
+            debug:
+              verbosity: normal # detailed, normal, ...
+            loki:
+              endpoint: http://loki:3100/loki/api/v1/push
+            prometheus:
+              endpoint: 0.0.0.0:8889
+          ## https://opentelemetry.io/docs/collector/configuration/#service
+          service:
+            pipelines:
+              logs:
+                receivers: [otlp]
+                processors: [batch]
+                exporters: [debug, loki]
+              traces:
+                receivers: [otlp]
+                processors: [batch]
+                exporters: [debug]
+              metrics:
+                receivers: [otlp]
+                processors: [batch]
+                exporters: [debug, prometheus]
+        ports:
+          otlp-http:
+            enabled: true
+            containerPort: 3030
+            servicePort: 3030
+            hostPort: 3030
+            protocol: TCP
+          prometheus:
+            enabled: true
+            containerPort: 8889
+            servicePort: 8889
+            hostPort: 8889
+            protocol: TCP
