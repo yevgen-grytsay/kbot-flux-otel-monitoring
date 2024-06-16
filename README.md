@@ -52,6 +52,9 @@ terraform apply -var-file=<your-var-file>
 | github_token    | GitHub PAT-токен для flux     |
 
 ## Якщо треба повторити шифрування секрету
+> [!NOTE]  
+> У даному репозиторії в зашифрованому вигляді зберігається токен для Telegram API. Цей токен не є дійсним. Я відкликав його, щоб зробити репозиторій публічним.
+
 Встановити [`kubeseal`](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#kubeseal).
 
 Завантажити сертифікат, згенерований `sealed-secrets-controller`:
